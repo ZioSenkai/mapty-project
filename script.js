@@ -21,7 +21,7 @@ if (navigator.geolocation) {
       const coords = [latitude, longitude];
       // using the 3rd party Leaflet to add a map into our web app
       const map = L.map('map').setView(coords, 13);
-      L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution:
           '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
