@@ -3,7 +3,6 @@
 class Workout {
   date = new Date();
   id = (Date.now() + '').slice(-10);
-  clicks = 0;
 
   constructor(coords, distance, duration) {
     this.coords = coords; // [lat, lng]
@@ -18,10 +17,6 @@ class Workout {
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth()]
     } ${this.date.getDate()}`;
-  }
-
-  click() {
-    this.clicks++;
   }
 }
 
@@ -82,7 +77,13 @@ class App {
   #workouts = [];
 
   constructor() {
+    // Get user's position
     this._getPosition();
+
+    // Get data from local storage
+    this._getLocalStorage();
+
+    // Attach event handler
     form.addEventListener('submit', this._newWorkOut.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
@@ -103,7 +104,7 @@ class App {
     // get the latitude(vĩ độ) and the longitude(kinh độ)
     const { latitude } = position.coords;
     const { longitude } = position.coords;
-    console.log(`https://www.google.com/maps/@${latitude},${longitude}`);
+    // console.log(`https://www.google.com/maps/@${latitude},${longitude}`);
     const coords = [latitude, longitude];
     // using the 3rd party Leaflet to add a map into our web app
     this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
@@ -119,6 +120,9 @@ class App {
     // Add event listener onto the map of the leaflet library
     // Handling clicks on map
     this.#map.on('click', this._showForm.bind(this));
+
+    // Render the marker
+    this.#workouts.forEach(workout => this._renderWorkoutMarker(workout));
   }
 
   _showForm(mapE) {
@@ -186,7 +190,7 @@ class App {
     }
     // Add new object to workout array
     this.#workouts.push(workout);
-    console.log(workout);
+    // console.log(workout);
 
     // Render workout on map as marker
     this._renderWorkoutMarker(workout);
@@ -196,6 +200,9 @@ class App {
 
     // Hide form + Clear input fields
     this._hideForm();
+
+    // Set local storage to all workouts
+    this._setLocalStorage();
   }
 
   _renderWorkoutMarker(workout) {
@@ -265,7 +272,7 @@ class App {
 
   _moveToPopup(e) {
     const workoutEl = e.target.closest('.workout');
-    console.log(workoutEl);
+
     if (!workoutEl) return;
 
     const workout = this.#workouts.find(
@@ -278,9 +285,28 @@ class App {
         duration: 1,
       },
     });
+  }
 
-    // using the public interface / API
-    workout.click();
+  _setLocalStorage() {
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+  }
+
+  _getLocalStorage() {
+    const data = JSON.parse(localStorage.getItem('workouts'));
+
+    if (!data) return;
+
+    this.#workouts = data;
+
+    this.#workouts.forEach(workout => this._renderWorkout(workout));
+  }
+
+  reset() {
+    // Remove all items with the keyword
+    localStorage.removeItem('workouts');
+
+    // Location = big object of the browser
+    location.reload();
   }
 }
 
