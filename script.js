@@ -278,6 +278,7 @@ class App {
         duration: 1,
       },
     });
+    workout.click()
   }
 }
 
