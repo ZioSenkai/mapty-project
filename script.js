@@ -3,7 +3,7 @@
 class Workout {
   date = new Date();
   id = (Date.now() + '').slice(-10);
-  click = 0;
+  clicks = 0;
 
   constructor(coords, distance, duration) {
     this.coords = coords; // [lat, lng]
@@ -21,7 +21,7 @@ class Workout {
   }
 
   click() {
-    this.click++;
+    this.clicks++;
   }
 }
 
@@ -278,7 +278,9 @@ class App {
         duration: 1,
       },
     });
-    workout.click()
+
+    // using the public interface / API
+    workout.click();
   }
 }
 
